@@ -38,7 +38,17 @@ const BookingDetails = () => {
   }
 
   const handleBack = () => {
-    navigate('/calendar')
+    navigate('/calendar', { 
+      state: { 
+        step: 2, 
+        skipCustomerForm: true,
+        formData: customerData || {
+          countryCode: '+1',
+          mobile: '',
+          customerName: ''
+        }
+      } 
+    })
   }
 
   const handleNewBookingSubmit = (e) => {

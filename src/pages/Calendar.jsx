@@ -1,22 +1,37 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import './Calendar.css'
 
 const Calendar = () => {
-  const [step, setStep] = useState(1) // 1: Customer details, 2: Calendar
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Check if we're coming from BookingDetails with state
+  const navigationState = location.state
+  const shouldSkipCustomerForm = navigationState?.skipCustomerForm || false
+  const initialStep = shouldSkipCustomerForm ? 2 : 1
+  const initialFormData = navigationState?.formData || {
     countryCode: '+1',
     mobile: '',
     customerName: ''
-  })
+  }
+
+  const [step, setStep] = useState(initialStep)
+  const [formData, setFormData] = useState(initialFormData)
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [errors, setErrors] = useState({})
 
-  const navigate = useNavigate()
   const { user, logout } = useAuth()
+
+  // Clear navigation state after processing to avoid interference with future navigation
+  useEffect(() => {
+    if (shouldSkipCustomerForm && window.history.replaceState) {
+      window.history.replaceState({}, '', '/calendar')
+    }
+  }, [shouldSkipCustomerForm])
 
   // Get current date for adding recent events
   const now = new Date()
