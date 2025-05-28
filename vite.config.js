@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/sam/', // GitHub Pages repository name
+  base: '/sam/', // Uncomment for GitHub Pages
 })
