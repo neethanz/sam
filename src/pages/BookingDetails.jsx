@@ -63,14 +63,6 @@ const BookingDetails = () => {
     }))
   }
 
-  const getStatusBadgeClass = (status) => {
-    return status === 'confirmed' ? 'status-confirmed' : 'status-unconfirmed'
-  }
-
-  const getTypeBadgeClass = (type) => {
-    return type === 'event' ? 'type-event' : 'type-function'
-  }
-
   const allBookings = [
     ...bookings.confirmedEvents,
     ...bookings.confirmedFunctions,
@@ -115,14 +107,6 @@ const BookingDetails = () => {
           </button>
         </div>
 
-        {customerData && (
-          <div className="customer-info-card">
-            <h3>Customer Information</h3>
-            <p><strong>Name:</strong> {customerData.customerName}</p>
-            <p><strong>Phone:</strong> {customerData.countryCode} {customerData.mobile}</p>
-          </div>
-        )}
-
         {allBookings.length === 0 ? (
           <div className="no-bookings">
             <div className="no-bookings-icon">📅</div>
@@ -131,151 +115,89 @@ const BookingDetails = () => {
           </div>
         ) : (
           <div className="bookings-sections">
-            {/* Confirmed Events */}
-            {bookings.confirmedEvents.length > 0 && (
-              <div className="booking-section">
-                <h2 className="section-title">
-                  <span className="section-icon">✅</span>
-                  Confirmed Events ({bookings.confirmedEvents.length})
-                </h2>
-                <div className="bookings-grid">
-                  {bookings.confirmedEvents.map((booking, index) => (
-                    <div key={`ce-${index}`} className="booking-card confirmed-event-card">
-                      <div className="card-header">
-                        <h4 className="booking-name">{booking.name}</h4>
-                        <div className="badges">
-                          <span className={`status-badge ${getStatusBadgeClass(booking.status)}`}>
-                            {booking.status}
-                          </span>
-                          <span className={`type-badge ${getTypeBadgeClass(booking.type)}`}>
-                            {booking.type}
-                          </span>
-                        </div>
+            {/* All Bookings in Strip Format - Ordered */}
+            <div className="booking-section">
+              <h2 className="section-title">
+                <span className="section-icon">📋</span>
+                All Bookings ({allBookings.length})
+              </h2>
+              
+              <div className="bookings-strips">
+                {/* Confirmed Events */}
+                {bookings.confirmedEvents.map((booking, index) => (
+                  <div key={`ce-${index}`} className={`booking-strip confirmed-event ${index % 2 === 0 ? 'red-tone' : 'purple-tone'}`}>
+                    <div className="strip-content">
+                      <div className="strip-info">
+                        <span className="strip-text">
+                          {booking.name} | {booking.customer} | {booking.package}
+                        </span>
+                        <span className="strip-label">Event</span>
                       </div>
-                      <div className="card-body">
-                        <p><strong>Customer:</strong> {booking.customer}</p>
-                        <p><strong>Package:</strong> {booking.package}</p>
-                        <p><strong>Date:</strong> {formatDate(selectedDate)}</p>
-                      </div>
-                      <div className="card-actions">
-                        <button className="edit-btn">Edit</button>
-                        <button className="delete-btn">Delete</button>
+                      <div className="strip-actions">
+                        <button title="Edit booking" className="action-btn">✎</button>
+                        <button title="Delete booking" className="action-btn">✕</button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                ))}
 
-            {/* Confirmed Functions */}
-            {bookings.confirmedFunctions.length > 0 && (
-              <div className="booking-section">
-                <h2 className="section-title">
-                  <span className="section-icon">🔷</span>
-                  Confirmed Functions ({bookings.confirmedFunctions.length})
-                </h2>
-                <div className="bookings-grid">
-                  {bookings.confirmedFunctions.map((booking, index) => (
-                    <div key={`cf-${index}`} className="booking-card confirmed-function-card">
-                      <div className="card-header">
-                        <h4 className="booking-name">{booking.name}</h4>
-                        <div className="badges">
-                          <span className={`status-badge ${getStatusBadgeClass(booking.status)}`}>
-                            {booking.status}
-                          </span>
-                          <span className={`type-badge ${getTypeBadgeClass(booking.type)}`}>
-                            {booking.type}
-                          </span>
-                        </div>
+                {/* Confirmed Functions */}
+                {bookings.confirmedFunctions.map((booking, index) => (
+                  <div key={`cf-${index}`} className="booking-strip confirmed-function">
+                    <div className="strip-content">
+                      <div className="strip-info">
+                        <span className="strip-text">
+                          {booking.name} ({selectedDate.getFullYear()}-{String(selectedDate.getMonth() + 1).padStart(2, '0')}-{String(selectedDate.getDate()).padStart(2, '0')} | {booking.name} | {booking.customer} | {booking.package})
+                        </span>
+                        <span className="strip-label">Function</span>
                       </div>
-                      <div className="card-body">
-                        <p><strong>Customer:</strong> {booking.customer}</p>
-                        <p><strong>Package:</strong> {booking.package}</p>
-                        <p><strong>Date:</strong> {formatDate(selectedDate)}</p>
-                      </div>
-                      <div className="card-actions">
-                        <button className="edit-btn">Edit</button>
-                        <button className="delete-btn">Delete</button>
+                      <div className="strip-actions">
+                        <button title="Edit booking" className="action-btn">✎</button>
+                        <button title="Delete booking" className="action-btn">✕</button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                ))}
 
-            {/* Unconfirmed Events */}
-            {bookings.unconfirmedEvents.length > 0 && (
-              <div className="booking-section">
-                <h2 className="section-title">
-                  <span className="section-icon">⏳</span>
-                  Unconfirmed Events ({bookings.unconfirmedEvents.length})
-                </h2>
-                <div className="bookings-grid">
-                  {bookings.unconfirmedEvents.map((booking, index) => (
-                    <div key={`ue-${index}`} className="booking-card unconfirmed-event-card">
-                      <div className="card-header">
-                        <h4 className="booking-name">{booking.name}</h4>
-                        <div className="badges">
-                          <span className={`status-badge ${getStatusBadgeClass(booking.status)}`}>
-                            {booking.status}
-                          </span>
-                          <span className={`type-badge ${getTypeBadgeClass(booking.type)}`}>
-                            {booking.type}
-                          </span>
-                        </div>
+                {/* Unconfirmed Events */}
+                {bookings.unconfirmedEvents.map((booking, index) => (
+                  <div key={`ue-${index}`} className={`booking-strip unconfirmed-event ${index % 2 === 0 ? 'light-red-tone' : 'light-purple-tone'}`}>
+                    <div className="strip-content">
+                      <div className="strip-info">
+                        <span className="strip-text">
+                          {booking.name} | {booking.customer} | {booking.package}
+                        </span>
+                        <span className="strip-label">Event</span>
                       </div>
-                      <div className="card-body">
-                        <p><strong>Customer:</strong> {booking.customer}</p>
-                        <p><strong>Package:</strong> {booking.package}</p>
-                        <p><strong>Date:</strong> {formatDate(selectedDate)}</p>
-                      </div>
-                      <div className="card-actions">
-                        <button className="confirm-btn">Confirm</button>
-                        <button className="edit-btn">Edit</button>
-                        <button className="delete-btn">Delete</button>
+                      <div className="strip-actions">
+                        <button title="Confirm booking" className="action-btn">✓</button>
+                        <button title="Edit booking" className="action-btn">✎</button>
+                        <button title="Delete booking" className="action-btn">✕</button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                ))}
 
-            {/* Unconfirmed Functions */}
-            {bookings.unconfirmedFunctions.length > 0 && (
-              <div className="booking-section">
-                <h2 className="section-title">
-                  <span className="section-icon">🔷</span>
-                  Unconfirmed Functions ({bookings.unconfirmedFunctions.length})
-                </h2>
-                <div className="bookings-grid">
-                  {bookings.unconfirmedFunctions.map((booking, index) => (
-                    <div key={`uf-${index}`} className="booking-card unconfirmed-function-card">
-                      <div className="card-header">
-                        <h4 className="booking-name">{booking.name}</h4>
-                        <div className="badges">
-                          <span className={`status-badge ${getStatusBadgeClass(booking.status)}`}>
-                            {booking.status}
-                          </span>
-                          <span className={`type-badge ${getTypeBadgeClass(booking.type)}`}>
-                            {booking.type}
-                          </span>
-                        </div>
+                {/* Unconfirmed Functions */}
+                {bookings.unconfirmedFunctions.map((booking, index) => (
+                  <div key={`uf-${index}`} className="booking-strip unconfirmed-function">
+                    <div className="strip-content">
+                      <div className="strip-info">
+                        <span className="strip-text">
+                          {booking.name} ({selectedDate.getFullYear()}-{String(selectedDate.getMonth() + 1).padStart(2, '0')}-{String(selectedDate.getDate()).padStart(2, '0')} | {booking.name} | {booking.customer} | {booking.package})
+                        </span>
+                        <span className="strip-label">Function</span>
                       </div>
-                      <div className="card-body">
-                        <p><strong>Customer:</strong> {booking.customer}</p>
-                        <p><strong>Package:</strong> {booking.package}</p>
-                        <p><strong>Date:</strong> {formatDate(selectedDate)}</p>
-                      </div>
-                      <div className="card-actions">
-                        <button className="confirm-btn">Confirm</button>
-                        <button className="edit-btn">Edit</button>
-                        <button className="delete-btn">Delete</button>
+                      <div className="strip-actions">
+                        <button title="Confirm booking" className="action-btn">✓</button>
+                        <button title="Edit booking" className="action-btn">✎</button>
+                        <button title="Delete booking" className="action-btn">✕</button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         )}
 
